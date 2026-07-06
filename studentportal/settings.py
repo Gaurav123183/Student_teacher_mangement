@@ -9,7 +9,10 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,12 +26,14 @@ print("BASE_DIR =", BASE_DIR)
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p39=2=mp(w3k5lt4--^zn@mg1f%8u!nz+9)z&zh6_75^sz=5bn'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "student-teacher-mangement.onrender.com"
+).split(",")
 
 
 # Application definition
@@ -75,10 +80,7 @@ WSGI_APPLICATION = 'studentportal.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
