@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduTrack AI — Free AI-Powered Learning Platform</title>
+  <!-- Bootstrap 5 + Icons + Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <style>
+    /* ----- DESIGN SYSTEM (matches dashboard) ----- */
+    :root {
+      --primary: #4F46E5;
+      --primary-dark: #4338CA;
+      --secondary: #7C3AED;
+      --accent: #06B6D4;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --sidebar-bg: #0F172A;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --border: #E7E8F2;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --shadow-soft: 0 8px 30px rgba(79, 70, 229, 0.08);
+      --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.06);
+      --grad-primary: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+      --grad-teal: linear-gradient(135deg, #06B6D4 0%, #34D399 100%);
+      --grad-amber: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+      --grad-rose: linear-gradient(135deg, #EF4444 0%, #FB7185 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Glassmorphism navbar (matches dashboard topbar style) */
+    .navbar-glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s ease;
+      padding: 12px 0;
+    }
+
+    .navbar-scrolled {
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .navbar-brand {
+      font-weight: 800;
+      font-size: 1.4rem;
+      background: var(--grad-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-link {
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text);
+      transition: 0.2s;
+      margin: 0 0.2rem;
+    }
+
+    .nav-link:hover {
+      color: var(--primary);
+    }
+
+    .btn-primary-grad {
+      background: var(--grad-primary);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn-primary-grad:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 20px -12px rgba(79, 70, 229, 0.5);
+    }
+
+    .btn-outline-custom {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 50px;
+      padding: 0.5rem 1.2rem;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .btn-outline-custom:hover {
+      border-color: var(--primary);
+      background: rgba(79, 70, 229, 0.04);
+    }
+
+    /* glass cards & dashboard mockups */
+    .glass-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .dashboard-preview {
+      background: var(--surface);
+      border-radius: 24px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .kpi-mini {
+      padding: 1rem;
+      border-radius: 18px;
+      background: var(--bg);
+    }
+
+    .role-tab {
+      cursor: pointer;
+      transition: all 0.2s;
+      padding: 0.6rem 1.5rem;
+      border-radius: 40px;
+      font-weight: 600;
+    }
+
+    .role-tab.active {
+      background: var(--grad-primary);
+      color: white;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .code-editor-mock {
+      background: #1E1E2E;
+      border-radius: 20px;
+      padding: 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #D4D4F4;
+    }
+
+    .badge-soft {
+      background: rgba(79, 70, 229, 0.12);
+      color: var(--primary);
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+
+    .comparison-table td, .comparison-table th {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(79, 70, 229, 0.1);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: var(--primary);
+    }
+
+    .section-padding {
+      padding: 5rem 0;
+    }
+
+    .footer-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: 0.2s;
+    }
+
+    .footer-link:hover {
+      color: var(--primary);
+    }
+
+    .free-badge {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--success);
+      border-radius: 100px;
+      padding: 0.25rem 1rem;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 768px) {
+      .section-padding {
+        padding: 3rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== NAVBAR (GLASS) - PRICING REMOVED ========== -->
+<nav class="navbar navbar-expand-lg fixed-top navbar-glass" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">EduTrack AI</a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mx-auto gap-2">
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+        <li class="nav-item"><a class="nav-link" href="#how-it-works">How It Works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#ai-review">AI Review</a></li>
+        <li class="nav-item"><a class="nav-link" href="#dashboards">Dashboards</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+      </ul>
+      <div class="d-flex gap-2">
+        <a href="/authentication/" class="btn btn-outline-custom">Student Login</a>
+        <a href="/authentication/" class="btn btn-outline-custom">Teacher Login</a>
+
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ========== HERO SECTION ========== -->
+<section id="home" class="pt-5 mt-5">
+  <div class="container pt-4">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <span class="badge-soft d-inline-block"><i class="bi bi-stars me-1"></i> AI-Powered LMS</span>
+          <span class="free-badge"><i class="bi bi-gem me-1"></i>100% Free — No pricing plans</span>
+        </div>
+        <h1 class="display-4 fw-bold lh-1 mb-4">AI-Powered Learning Platform for <span style="background:var(--grad-primary); -webkit-background-clip:text; background-clip:text; color:transparent;">Modern Education</span></h1>
+        <p class="lead text-secondary mb-4">Track attendance, review code with AI, manage homework, conduct tests, and predict student success from a single intelligent platform — completely free.</p>
+        <div class="d-flex gap-3">
+          <a href="#" class="btn btn-primary-grad px-4 py-3">Get Started Free <i class="bi bi-arrow-right ms-1"></i></a>
+
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="dashboard-preview p-3">
+          <div class="bg-light p-3 rounded-4">
+            <div class="d-flex justify-content-between mb-3">
+              <span class="fw-semibold"><i class="bi bi-calendar-check text-primary me-1"></i> Attendance</span>
+              <span class="fw-bold text-success">92%</span>
+            </div>
+            <div class="progress mb-3" style="height: 8px;"><div class="progress-bar bg-primary" style="width:92%"></div></div>
+            <div class="d-flex justify-content-between mb-2"><span><i class="bi bi-journal-bookmark-fill"></i> Homework</span><span>28/30</span></div>
+            <div class="d-flex justify-content-between mb-2"><span><i class="bi bi-cpu"></i> AI Review Score</span><span class="fw-bold">8.7/10</span></div>
+            <div class="d-flex justify-content-between mb-2"><span><i class="bi bi-graph-up"></i> Performance</span><span>86.4</span></div>
+            <div class="mt-3 p-2 rounded-3" style="background: rgba(79,70,229,0.08);"><i class="bi bi-robot text-primary me-2"></i> Predicted Grade: <strong>A-</strong> <span class="float-end text-success">94% conf.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ROLE SWITCH DEMO (Student / Teacher) ========== -->
+<section class="section-padding">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">One platform, two perspectives</h2>
+      <p class="text-muted">Switch between Student and Teacher views — both included for free</p>
+      <div class="d-flex justify-content-center gap-3 mt-3">
+        <div class="role-tab active" id="studentTab">👩‍🎓 Student View</div>
+        <div class="role-tab" id="teacherTab">👩‍🏫 Teacher View</div>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="dashboard-preview p-4" id="rolePreview">
+          <div class="row g-4" id="studentPreview">
+            <div class="col-md-3"><div class="kpi-mini text-center"><i class="bi bi-calendar2-check fs-2 text-primary"></i><h3 class="mt-2">92%</h3><span>Attendance</span></div></div>
+            <div class="col-md-3"><div class="kpi-mini text-center"><i class="bi bi-journal-check fs-2 text-success"></i><h3 class="mt-2">28/30</h3><span>Homework</span></div></div>
+            <div class="col-md-3"><div class="kpi-mini text-center"><i class="bi bi-cpu fs-2 text-warning"></i><h3 class="mt-2">8.7</h3><span>AI Score</span></div></div>
+            <div class="col-md-3"><div class="kpi-mini text-center"><i class="bi bi-trophy fs-2 text-secondary"></i><h3 class="mt-2">A-</h3><span>Predicted</span></div></div>
+          </div>
+          <div class="row g-4 d-none" id="teacherPreview">
+            <div class="col-md-3"><div class="kpi-mini text-center"><i class="bi bi-people fs-2 text-primary"></i><h3>145</h3><span>Students</span></div></div>
+            <div class="col-md-3"><div class="kpi-mini text-center"><i class="bi bi-file-text fs-2 text-success"></i><h3>42</h3><span>Assignments</span></div></div>
+            <div class="col-md-3"><div class="kpi-mini text-center"><i class="bi bi-bar-chart fs-2 text-warning"></i><h3>88%</h3><span>Avg. Analytics</span></div></div>
+            <div class="col-md-3"><div class="kpi-mini text-center"><i class="bi bi-robot fs-2 text-secondary"></i><h3>112</h3><span>AI Reviews</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== HOW IT WORKS (animated workflow) ========== -->
+<section id="how-it-works" class="bg-white section-padding">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5">How EduTrack AI works</h2>
+    <div class="row g-4 text-center align-items-center">
+      <div class="col-md-2"><div class="glass-card p-3"><i class="bi bi-person-badge fs-1 text-primary"></i><p class="fw-bold mt-2">Student</p></div></div>
+      <div class="col-md-1 d-none d-md-block"><i class="bi bi-arrow-right fs-1 text-muted"></i></div>
+      <div class="col-md-2"><div class="glass-card p-3"><i class="bi bi-qr-code-scan fs-1 text-primary"></i><p class="fw-bold mt-2">Mark Attendance</p></div></div>
+      <div class="col-md-1 d-none d-md-block"><i class="bi bi-arrow-right fs-1 text-muted"></i></div>
+      <div class="col-md-2"><div class="glass-card p-3"><i class="bi bi-upload fs-1 text-primary"></i><p class="fw-bold mt-2">Submit Homework</p></div></div>
+      <div class="col-md-1 d-none d-md-block"><i class="bi bi-arrow-right fs-1 text-muted"></i></div>
+      <div class="col-md-2"><div class="glass-card p-3"><i class="bi bi-gemini fs-1 text-primary"></i><p class="fw-bold mt-2">AI Review (Gemini)</p></div></div>
+      <div class="col-12 mt-3"><i class="bi bi-arrow-down fs-3 text-muted"></i></div>
+      <div class="col-md-4 mx-auto"><div class="glass-card p-3"><i class="bi bi-person-workspace fs-1 text-secondary"></i><p class="fw-bold mt-2">Teacher monitors + ML predicts performance</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== AI CODE REVIEW SHOWCASE (impressive) ========== -->
+<section id="ai-review" class="section-padding">
+  <div class="container">
+    <div class="text-center mb-5"><h2 class="fw-bold">Gemini AI Code Review</h2><p class="text-muted">Instant feedback, optimized code, and professional suggestions — free for every student</p></div>
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="glass-card p-4">
+          <h5><i class="bi bi-code-slash me-2 text-primary"></i> Student Code (Before)</h5>
+          <div class="code-editor-mock mt-3">
+            <pre style="margin:0; color:#cbd5e1;">def binary_search(arr,target):
+ low,high=0,len(arr)-1
+ while low<=high:
+  mid=(low+high)//2
+  if arr[mid]==target:
+   return mid
+  elif arr[mid]&lt;target:
+   low=mid+1
+  else:
+   high=mid-1
+ return -1</pre>
+          </div>
+          <div class="mt-3"><span class="badge-soft">Complexity: O(log n)</span><span class="badge-soft ms-2">⚠️ No docstring</span></div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="glass-card p-4" style="border-left: 4px solid var(--primary);">
+          <h5><i class="bi bi-robot me-2 text-primary"></i> AI Review & Optimized</h5>
+          <div class="d-flex justify-content-between flex-wrap mb-3">
+            <span>Quality: <strong class="text-success">9.2/10</strong></span>
+            <span>Security: ✅ No issues</span>
+            <span>Bugs: 0</span>
+          </div>
+          <div class="code-editor-mock" style="background:#0F172A;">
+            <pre style="margin:0; color:#a5f3c3;">def binary_search(arr: list, target: int) -> int:
+    """Perform binary search, return index or -1."""
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1</pre>
+          </div>
+          <div class="alert alert-primary mt-3 small"><i class="bi bi-lightbulb"></i> Suggestion: Add type hints and docstring for readability – AI-approved!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== STUDENT DASHBOARD SHOWCASE ========== -->
+<section id="dashboards" class="bg-white section-padding">
+  <div class="container">
+    <div class="text-center mb-5"><h2 class="fw-bold">Student Dashboard</h2><p class="text-muted">Everything at a glance: attendance, tasks, AI insights & leaderboard</p></div>
+    <div class="dashboard-preview p-4 shadow-lg">
+      <div class="row g-3">
+        <div class="col-md-3"><div class="glass-card p-3 text-center"><i class="bi bi-calendar-week fs-2 text-primary"></i><h5>92%</h5><span>Attendance</span></div></div>
+        <div class="col-md-3"><div class="glass-card p-3 text-center"><i class="bi bi-journal-richtext fs-2 text-success"></i><h5>28/30</h5><span>Homework</span></div></div>
+        <div class="col-md-3"><div class="glass-card p-3 text-center"><i class="bi bi-pencil-square fs-2 text-warning"></i><h5>Upcoming</h5><span>3 Tests</span></div></div>
+        <div class="col-md-3"><div class="glass-card p-3 text-center"><i class="bi bi-trophy fs-2 text-secondary"></i><h5>#7 Rank</h5><span>Leaderboard</span></div></div>
+        <div class="col-12 mt-3"><div class="glass-card p-3"><i class="bi bi-robot me-2"></i> AI Mentor: You're improving in DSA! +15% coding streak.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TEACHER DASHBOARD SHOWCASE ========== -->
+<section class="section-padding">
+  <div class="container">
+    <div class="text-center mb-5"><h2 class="fw-bold">Teacher Dashboard</h2><p class="text-muted">Monitor progress, manage assignments, AI-powered class analytics — zero cost</p></div>
+    <div class="dashboard-preview p-4 shadow-lg">
+      <div class="row g-3">
+        <div class="col-md-3"><div class="glass-card p-3 text-center"><i class="bi bi-people fs-2 text-primary"></i><h5>145</h5><span>Total Students</span></div></div>
+        <div class="col-md-3"><div class="glass-card p-3 text-center"><i class="bi bi-clock-history fs-2 text-warning"></i><h5>32</h5><span>Pending HW</span></div></div>
+        <div class="col-md-3"><div class="glass-card p-3 text-center"><i class="bi bi-graph-up fs-2 text-success"></i><h5>86%</h5><span>Avg Score</span></div></div>
+        <div class="col-md-3"><div class="glass-card p-3 text-center"><i class="bi bi-file-earmark-code fs-2 text-secondary"></i><h5>112</h5><span>AI Reviews</span></div></div>
+        <div class="col-12 mt-3"><div class="glass-card p-3 bg-light">📊 Risk Detection: 3 students with low attendance – AI recommends intervention.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ML PERFORMANCE PREDICTION ========== -->
+<section class="bg-white section-padding">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-4">Machine Learning Performance Prediction</h2>
+    <div class="row g-4 align-items-center">
+      <div class="col-md-6">
+        <div class="glass-card p-4">
+          <p class="mb-2"><i class="bi bi-bar-chart-steps me-1"></i> Input features →</p>
+          <div class="d-flex flex-wrap gap-2 mb-3"><span class="badge-soft">Attendance 92%</span><span class="badge-soft">Homework 28/30</span><span class="badge-soft">Test avg 88%</span><span class="badge-soft">Code Quality 8.7</span></div>
+          <div class="progress mb-3"><div class="progress-bar bg-primary" style="width:92%"></div></div>
+          <i class="bi bi-arrow-down-short fs-2"></i>
+          <div class="mt-3 p-3 rounded-3" style="background:#F1F5F9;"><strong>ML Model (Random Forest)</strong> → Prediction</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row g-3">
+          <div class="col-6"><div class="glass-card p-3 text-center"><h4 class="text-primary">A-</h4><span>Predicted Grade</span></div></div>
+          <div class="col-6"><div class="glass-card p-3 text-center"><h4 class="text-success">91%</h4><span>Success Prob.</span></div></div>
+          <div class="col-6"><div class="glass-card p-3 text-center"><h4 class="text-warning">Low</h4><span>Risk Level</span></div></div>
+          <div class="col-6"><div class="glass-card p-3 text-center"><h4 class="text-info">94%</h4><span>Confidence</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== KEY FEATURES ========== -->
+<section id="features" class="section-padding">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5">Everything you need, 100% free</h2>
+    <div class="row g-4">
+      <div class="col-md-3 col-6"><div class="text-center"><div class="feature-icon mx-auto"><i class="bi bi-qr-code-scan"></i></div><h6 class="mt-2">Attendance</h6></div></div>
+      <div class="col-md-3 col-6"><div class="text-center"><div class="feature-icon mx-auto"><i class="bi bi-upload"></i></div><h6 class="mt-2">Homework</h6></div></div>
+      <div class="col-md-3 col-6"><div class="text-center"><div class="feature-icon mx-auto"><i class="bi bi-cpu"></i></div><h6 class="mt-2">AI Code Review</h6></div></div>
+      <div class="col-md-3 col-6"><div class="text-center"><div class="feature-icon mx-auto"><i class="bi bi-pencil-square"></i></div><h6 class="mt-2">Online Tests</h6></div></div>
+      <div class="col-md-3 col-6"><div class="text-center"><div class="feature-icon mx-auto"><i class="bi bi-graph-up"></i></div><h6 class="mt-2">Analytics</h6></div></div>
+      <div class="col-md-3 col-6"><div class="text-center"><div class="feature-icon mx-auto"><i class="bi bi-robot"></i></div><h6 class="mt-2">ML Prediction</h6></div></div>
+      <div class="col-md-3 col-6"><div class="text-center"><div class="feature-icon mx-auto"><i class="bi bi-person-badge"></i></div><h6 class="mt-2">Teacher Dashboard</h6></div></div>
+      <div class="col-md-3 col-6"><div class="text-center"><div class="feature-icon mx-auto"><i class="bi bi-mortarboard"></i></div><h6 class="mt-2">Student Dashboard</h6></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== WHY EDUTRACK AI (COMPARISON) ========== -->
+<section class="bg-white section-padding">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-4">Why EduTrack AI?</h2>
+    <div class="table-responsive glass-card p-3">
+      <table class="table comparison-table mb-0">
+        <thead><tr><th></th><th>Traditional LMS</th><th>EduTrack AI (Free)</th></tr></thead>
+        <tbody>
+          <tr><td>Attendance</td><td>Manual registers</td><td><i class="bi bi-check-lg text-success"></i> QR / AI face</td></tr>
+          <tr><td>AI Code Review</td><td>❌ Not available</td><td><i class="bi bi-check-lg text-success"></i> Gemini API</td></tr>
+          <tr><td>Performance Prediction</td><td>Basic stats</td><td><i class="bi bi-check-lg text-success"></i> ML Forecast</td></tr>
+          <tr><td>Analytics</td><td>Static reports</td><td><i class="bi bi-check-lg text-success"></i> Real-time dashboards</td></tr>
+          <tr><td>Pricing</td><td>Expensive licenses</td><td><i class="bi bi-check-lg text-success"></i> Completely Free</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CALL TO ACTION (NO PRICING) ========== -->
+<section class="py-5 text-white text-center" style="background: var(--grad-primary);">
+  <div class="container">
+    <h2 class="display-6 fw-bold">Ready to Transform Learning with AI?</h2>
+    <p class="lead mb-4">Join thousands of educators and students using EduTrack AI — completely free, no hidden costs.</p>
+    <a href="#" class="btn btn-light rounded-pill px-5 py-3 fw-semibold text-primary">Get Started Free <i class="bi bi-arrow-right"></i></a>
+    <a href="#" class="btn btn-outline-light rounded-pill px-5 py-3 ms-3">Request Demo</a>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="border-top pt-5 pb-4 bg-white" id="contact">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4"><h5 class="fw-bold">EduTrack AI</h5><p class="text-muted small">AI-Powered Learning Management System — 100% Free</p></div>
+      <div class="col-md-2"><ul class="list-unstyled"><li><a href="#home" class="footer-link">Home</a></li><li><a href="#features" class="footer-link">Features</a></li><li><a href="#contact" class="footer-link">Contact</a></li></ul></div>
+      <div class="col-md-2"><ul class="list-unstyled"><li><a href="#" class="footer-link">Support</a></li><li><a href="#" class="footer-link">Privacy</a></li><li><a href="#" class="footer-link">Terms</a></li></ul></div>
+      <div class="col-md-4"><div class="d-flex gap-3 fs-4"><i class="bi bi-twitter-x footer-link"></i><i class="bi bi-linkedin footer-link"></i><i class="bi bi-github footer-link"></i></div><p class="text-muted small mt-3">© 2025 EduTrack AI. Forever free for education.</p></div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('mainNav');
+    if (window.scrollY > 50) nav.classList.add('navbar-scrolled');
+    else nav.classList.remove('navbar-scrolled');
+  });
+
+  // Role switch (Student / Teacher) interactive
+  const studentTab = document.getElementById('studentTab');
+  const teacherTab = document.getElementById('teacherTab');
+  const studentPreview = document.getElementById('studentPreview');
+  const teacherPreview = document.getElementById('teacherPreview');
+
+  function setRole(role) {
+    if (role === 'student') {
+      studentTab.classList.add('active');
+      teacherTab.classList.remove('active');
+      studentPreview.classList.remove('d-none');
+      teacherPreview.classList.add('d-none');
+    } else {
+      teacherTab.classList.add('active');
+      studentTab.classList.remove('active');
+      studentPreview.classList.add('d-none');
+      teacherPreview.classList.remove('d-none');
+    }
+  }
+  studentTab.addEventListener('click', () => setRole('student'));
+  teacherTab.addEventListener('click', () => setRole('teacher'));
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>EduTrack AI | Teacher Command Center</title>
+  <!-- Bootstrap 5 + Icons + Chart.js -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{
+      --primary:#4F46E5; --primary-dark:#4338CA; --secondary:#7C3AED; --accent:#06B6D4;
+      --success:#10B981; --warning:#F59E0B; --danger:#EF4444;
+      --bg:#F8FAFC; --surface:#FFFFFF; --sidebar-bg:#0F172A;
+      --text:#0F172A; --text-muted:#64748B; --border:#E7E8F2;
+      --radius-lg:22px; --radius-md:16px;
+      --shadow-soft:0 8px 30px rgba(79,70,229,0.08);
+      --shadow-card:0 4px 18px rgba(0,0,0,0.06);
+      --grad-primary:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);
+    }
+    [data-theme="dark"]{
+      --bg:#0F172A; --surface:#1E293B; --text:#F1F5F9; --text-muted:#94A3B8; --border:#334155;
+      --shadow-soft:0 8px 30px rgba(0,0,0,0.4);
+    }
+    body{font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); transition:background 0.3s,color 0.2s; overflow-x:hidden;}
+    /* Sidebar */
+    .sidebar{position:fixed;top:0;left:0;height:100vh;width:270px;background:var(--sidebar-bg);color:#A0AEC0;display:flex;flex-direction:column;padding:24px 16px;z-index:1050;transition:transform 0.3s ease;overflow-y:auto;}
+    .sidebar-brand{display:flex;align-items:center;gap:10px;padding:0 12px 28px;}
+    .logo-mark{width:38px;height:38px;border-radius:12px;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;}
+    .brand-text{font-weight:800;font-size:1.1rem;color:white;}
+    .nav-link-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;color:#A0AEC0;text-decoration:none;font-size:0.85rem;font-weight:500;margin-bottom:4px;transition:all 0.2s;}
+    .nav-link-item i{font-size:1.05rem;width:22px;}
+    .nav-link-item:hover,.nav-link-item.active{background:rgba(79,70,229,0.2);color:white;}
+    /* Main */
+    .main-wrapper{margin-left:270px;transition:margin 0.3s;}
+    .topbar{position:sticky;top:0;z-index:1040;background:rgba(255,255,255,0.75);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+    [data-theme="dark"] .topbar{background:rgba(30,41,59,0.8);}
+    .search-wrap{position:relative;flex:1;max-width:300px;}
+    .search-input{width:100%;border-radius:50px;border:1px solid var(--border);background:var(--surface);padding:8px 14px 8px 38px;font-size:0.85rem;color:var(--text);}
+    .icon-btn{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:0.2s;}
+    .glass-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);transition:transform 0.2s,box-shadow 0.2s;}
+    .glass-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-soft);}
+    .badge-soft{padding:4px 12px;border-radius:50px;font-size:0.7rem;font-weight:600;}
+    .badge-soft.success{background:rgba(16,185,129,0.12);color:#10B981;}
+    .badge-soft.warning{background:rgba(245,158,11,0.12);color:#F59E0B;}
+    .badge-soft.danger{background:rgba(239,68,68,0.12);color:#EF4444;}
+    .badge-soft.primary{background:rgba(79,70,229,0.12);color:#4F46E5;}
+    .progress-sm{height:6px;border-radius:10px;}
+    .table-modern th{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);border-bottom:1px solid var(--border);}
+    .avatar-sm{width:36px;height:36px;border-radius:12px;object-fit:cover;}
+    .btn-primary-grad{background:var(--grad-primary);border:none;color:white;border-radius:50px;padding:6px 18px;font-weight:500;transition:0.2s;}
+    .btn-outline-custom{border:1px solid var(--border);background:transparent;color:var(--text);border-radius:50px;padding:6px 18px;}
+    @media (max-width:992px){.sidebar{transform:translateX(-100%);}.sidebar.show{transform:translateX(0);}.main-wrapper{margin-left:0;}.sidebar-toggle{display:flex;}}
+    .sidebar-toggle{display:none;}
+    .kpi-card{padding:1.2rem;border-radius:1.25rem;}
+    .gradient-border{border-left:3px solid var(--primary);}
+  </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-brand"><div class="logo-mark"><i class="bi bi-mortarboard-fill"></i></div><div class="brand-text">EduTrack AI<br><small style="font-size:0.6rem;">TEACHER PORTAL</small></div></div>
+  <div class="flex-grow-1">
+    <a href="#" class="nav-link-item active"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-people-fill"></i> Students</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-calendar2-check-fill"></i> Attendance</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-journal-richtext"></i> Homework</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-pencil-square"></i> Assignments</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-file-earmark-code"></i> Assignment Submissions</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-file-text-fill"></i> Tests</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-question-circle-fill"></i> Question Bank</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-bar-chart-steps"></i> Test Results</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-cpu-fill"></i> AI Code Reviews</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-graph-up"></i> Performance Analytics</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-megaphone-fill"></i> Announcements</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-file-earmark-text"></i> Reports</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-bell-fill"></i> Notifications</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-person-circle"></i> Profile</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-gear-fill"></i> Settings</a>
+    <a href="#" class="nav-link-item"><i class="bi bi-box-arrow-right"></i> Logout</a>
+  </div>
+</div>
+
+<div class="main-wrapper">
+  <div class="topbar">
+    <button class="icon-btn sidebar-toggle" id="sidebarToggle"><i class="bi bi-list"></i></button>
+    <div class="search-wrap"><i class="bi bi-search"></i><input type="text" class="search-input" placeholder="Search students, assignments..."></div>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <span class="text-muted small" id="currentDate"></span>
+      <div class="icon-btn" id="darkModeToggle"><i class="bi bi-moon-stars"></i></div>
+      <div class="icon-btn position-relative"><i class="bi bi-bell-fill"></i><span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem;">6</span></div>
+      <div class="d-flex align-items-center gap-2"><img src="https://randomuser.me/api/portraits/men/32.jpg" class="avatar-sm"><div class="fw-semibold d-none d-md-block">Prof. Mehta</div></div>
+      <button class="btn btn-primary-grad btn-sm"><i class="bi bi-plus-lg"></i> Quick Create</button>
+    </div>
+  </div>
+
+  <div class="p-3 p-md-4">
+    <!-- Hero Welcome + Summary -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+      <div><h2 class="fw-bold">Welcome back, Professor Mehta 👋</h2><p class="text-muted">Manage your class, assignments, tests, and AI insights</p></div>
+      <div><button class="btn btn-primary-grad"><i class="bi bi-pencil-square"></i> Create Assignment</button>
+      <button class="btn btn-outline-custom ms-2"><i class="bi bi-file-text"></i> Create Test</button>
+      <button class="btn btn-outline-custom ms-2"><i class="bi bi-megaphone"></i> Announcement</button></div>
+    </div>
+
+    <!-- 8 KPI Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3"><div class="glass-card p-3"><div class="text-muted small">Total Students</div><h3 class="mb-0 fw-bold">142</h3><span class="badge-soft success"><i class="bi bi-arrow-up-short"></i> +8%</span><i class="bi bi-people-fill float-end fs-3 text-primary opacity-50"></i></div></div>
+      <div class="col-6 col-md-3"><div class="glass-card p-3"><div class="text-muted small">Attendance Rate</div><h3 class="mb-0 fw-bold">91.2%</h3><span class="badge-soft success">+2%</span></div></div>
+      <div class="col-6 col-md-3"><div class="glass-card p-3"><div class="text-muted small">Assignment Completion</div><h3 class="mb-0 fw-bold">84%</h3><span class="badge-soft warning">-4%</span></div></div>
+      <div class="col-6 col-md-3"><div class="glass-card p-3"><div class="text-muted small">Avg Test Score</div><h3 class="mb-0 fw-bold">78.4%</h3><span class="badge-soft success">+5%</span></div></div>
+      <div class="col-6 col-md-3"><div class="glass-card p-3"><div class="text-muted small">Pending Reviews</div><h3 class="mb-0 fw-bold">24</h3><span class="badge-soft danger">Action needed</span></div></div>
+      <div class="col-6 col-md-3"><div class="glass-card p-3"><div class="text-muted small">Avg AI Review Score</div><h3 class="mb-0 fw-bold">7.8/10</h3><span class="badge-soft primary">+0.4</span></div></div>
+      <div class="col-6 col-md-3"><div class="glass-card p-3"><div class="text-muted small">Performance Index</div><h3 class="mb-0 fw-bold">84/100</h3><div class="progress progress-sm mt-1"><div class="progress-bar bg-primary" style="width:84%"></div></div></div></div>
+      <div class="col-6 col-md-3"><div class="glass-card p-3"><div class="text-muted small">At Risk Students</div><h3 class="mb-0 fw-bold text-danger">12</h3><span class="badge-soft danger">Intervene</span></div></div>
+    </div>
+
+    <!-- Student Management Table -->
+    <div class="glass-card p-3 mb-4">
+      <h5 class="fw-bold mb-3">📋 Student Analytics (Performance & Risk)</h5>
+      <div class="table-responsive">
+        <table class="table table-modern align-middle">
+          <thead><tr><th>Student</th><th>Roll</th><th>Attendance</th><th>Assignment %</th><th>Test Avg</th><th>AI Score</th><th>Predicted Grade</th><th>Risk</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><div class="d-flex gap-2"><img src="https://randomuser.me/api/portraits/women/68.jpg" width="30" class="rounded-3"> Ananya S.</div></td><td>CS101</td><td>94%</td><td>92%</td><td>86%</td><td>8.7</td><td>A-</td><td><span class="badge-soft success">Low</span></td><td><i class="bi bi-eye text-primary me-2"></i><i class="bi bi-graph-up"></i></td></tr>
+            <tr><td><div class="d-flex gap-2"><img src="https://randomuser.me/api/portraits/men/45.jpg" width="30" class="rounded-3"> Rohan V.</div></td><td>CS102</td><td>68%</td><td>58%</td><td>59%</td><td>5.2</td><td>D+</td><td><span class="badge-soft danger">High</span></td><td><i class="bi bi-eye me-2"></i><i class="bi bi-chat"></i></td></tr>
+            <tr><td><div class="d-flex gap-2"><img src="https://randomuser.me/api/portraits/women/22.jpg" width="30" class="rounded-3"> Priya K.</div></td><td>CS103</td><td>97%</td><td>96%</td><td>94%</td><td>9.4</td><td>A+</td><td><span class="badge-soft success">Low</span></td><td><i class="bi bi-eye"></i></td></tr>
+            <tr><td><div class="d-flex gap-2"><img src="https://randomuser.me/api/portraits/men/12.jpg" width="30" class="rounded-3"> Aditya J.</div></td><td>CS104</td><td>72%</td><td>70%</td><td>71%</td><td>6.8</td><td>C+</td><td><span class="badge-soft warning">Medium</span></td><td><i class="bi bi-eye"></i></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Assignment Management & Submissions -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-6"><div class="glass-card p-4"><h5>📝 Active Assignments</h5><div class="border-bottom py-2 d-flex justify-content-between"><span>DSA - Binary Search Tree</span><span class="badge-soft warning">Due: 04/20</span><button class="btn btn-sm btn-outline-custom">Edit</button></div><div class="border-bottom py-2 d-flex justify-content-between"><span>DBMS - Normalization</span><span class="badge-soft success">32 submitted</span><button class="btn btn-sm btn-outline-custom">Review</button></div><button class="btn btn-primary-grad mt-3 w-100"><i class="bi bi-plus"></i> Create New Assignment</button></div></div>
+      <div class="col-md-6"><div class="glass-card p-4"><h5>📂 Pending Submissions (Teacher Feedback)</h5><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Student</th><th>Assignment</th><th>Status</th><th>Marks</th><th>Action</th></tr></thead><tbody><tr><td>Rohan V.</td><td>BST Implementation</td><td>Pending</td><td>—</td><td><button class="btn btn-sm btn-primary-grad">Review & Grade</button></td></tr><tr><td>Simran K.</td><td>Normalization</td><td>Graded</td><td>18/20</td><td><i class="bi bi-check-circle text-success"></i> Done</td></tr></tbody></table></div></div></div>
+    </div>
+
+    <!-- Test Management + Automatic Evaluation Demo -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-6"><div class="glass-card p-4"><h5>📋 Upcoming & Active Tests</h5><div class="d-flex justify-content-between border-bottom py-2"><span>Algorithms Midterm</span><span class="text-muted">Apr 25, 2026</span><button class="btn btn-sm btn-outline-custom">Edit</button></div><div class="d-flex justify-content-between border-bottom py-2"><span>SQL Quiz</span><span class="text-muted">Apr 18, 2026</span><button class="btn btn-sm btn-primary-grad">Auto-Evaluate</button></div><button class="btn btn-primary-grad mt-3 w-100"><i class="bi bi-plus"></i> Create Test + Upload Correct Answers</button></div></div>
+      <div class="col-md-6"><div class="glass-card p-4"><h5>🤖 Automatic Test Evaluation (Sample)</h5><div class="small bg-light p-2 rounded">Question: What is the time complexity of Merge Sort?<br>✅ Correct Answer: O(n log n) → Student: O(n log n) -> 5/5</div><div class="small bg-light p-2 rounded mt-2">Question: Which of the following is a stable sort?<br>✅ Correct: Merge Sort → Student: Quick Sort (0/5)</div><hr><div class="fw-bold">Total Score: 18/25 | Percentage: 72% | <span class="text-success">Pass</span></div></div></div>
+    </div>
+
+    <!-- AI Code Review Dashboard & Performance Charts -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-5"><div class="glass-card p-4"><h5><i class="bi bi-cpu-fill"></i> AI Code Reviews</h5><div class="row"><div class="col-6">Total Reviews: 314</div><div class="col-6">Pending: 23</div><div class="col-6">Avg AI Score: 7.8</div><div class="col-6">Security Issues: 12</div></div><div class="badge-soft warning w-100 my-1">Most Common: Null pointer (34%)</div><div class="badge-soft danger w-100">Weak area: Recursion & Dynamic Programming</div></div></div>
+      <div class="col-md-7"><div class="glass-card p-4"><h5>📈 Performance Trends</h5><canvas id="trendChart" height="160"></canvas></div></div>
+    </div>
+
+    <!-- At Risk + Top Performers + ML Prediction -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-4"><div class="glass-card p-4"><h5>⚠️ At Risk (Intervention)</h5><div class="d-flex justify-content-between border-bottom py-2"><span>Rohan V. (68% attend)</span><span class="text-danger">High</span><button class="btn btn-sm btn-outline-danger">Message</button></div><div class="d-flex justify-content-between border-bottom py-2"><span>Simran K. (Test:45%)</span><span class="text-danger">High</span><button class="btn btn-sm btn-outline-danger">Alert</button></div><div>Recommended: Extra tutoring sessions</div></div></div>
+      <div class="col-md-4"><div class="glass-card p-4"><h5>🏆 Top Performers</h5>1. Priya K. (94%) <i class="bi bi-star-fill text-warning"></i><br>2. Ananya S. (86%)<br>3. Rahul N. (82%)</div></div>
+      <div class="col-md-4"><div class="glass-card p-4"><h5>🧠 ML Performance Prediction</h5>Class Success Probability: 86%<br>At-risk predicted: 12 students<br>Confidence: 92%<br><div class="progress mt-2"><div class="progress-bar bg-success" style="width:86%"></div></div><span class="small text-muted">Based on attendance, assignments, tests, AI reviews</span></div></div>
+    </div>
+
+    <!-- Announcements & Reports & Recent Activity -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-6"><div class="glass-card p-4"><h5>📢 Announcements (Publish to students)</h5><textarea class="form-control mb-2" rows="2" placeholder="Write announcement..."></textarea><div class="d-flex gap-2"><button class="btn btn-primary-grad">Publish Now</button><button class="btn btn-outline-custom">Schedule</button></div><hr><div class="border-bottom py-1"><i class="bi bi-megaphone"></i> Mid-term exam postponed to 25th Apr - 2d ago</div><div class="border-bottom py-1"><i class="bi bi-check-circle text-success"></i> Assignment deadline extended - yesterday</div></div></div>
+      <div class="col-md-6"><div class="glass-card p-4"><h5>📑 Generate Reports</h5><button class="btn btn-outline-custom w-100 mb-2"><i class="bi bi-file-pdf"></i> Attendance Report</button><button class="btn btn-outline-custom w-100 mb-2"><i class="bi bi-file-spreadsheet"></i> Assignment Report</button><button class="btn btn-outline-custom w-100 mb-2"><i class="bi bi-file-text"></i> Test Performance Report</button><button class="btn btn-primary-grad w-100"><i class="bi bi-download"></i> Export All (PDF/Excel)</button></div></div>
+    </div>
+
+    <!-- Recent Activity Timeline & Notifications -->
+    <div class="glass-card p-4"><h5>🕒 Recent Activity & Notifications</h5><div class="row"><div class="col-md-6"><div class="border-start ps-3 py-1">📌 Rohan submitted assignment (pending review) - 2h ago</div><div class="border-start ps-3 py-1">✅ Auto-evaluated SQL Quiz - 12 students graded</div><div class="border-start ps-3 py-1">🤖 AI Code Review completed for 8 submissions</div></div><div class="col-md-6"><div class="border-start ps-3 py-1">⚠️ 3 students attendance below 75% - send reminder</div><div class="border-start ps-3 py-1">📢 Announcement published: Office hours updated</div><div class="border-start ps-3 py-1">📊 Performance prediction updated for mid-terms</div></div></div></div>
+
+    <!-- Profile & Settings Section -->
+    <div class="glass-card p-4 mt-4"><h5>👤 Profile & Settings</h5><div class="row"><div class="col-md-6"><p><strong>Prof. Mehta</strong><br>Dept: Computer Science<br>Designation: Senior Professor<br>Email: mehta@edutrack.ai</p></div><div class="col-md-6"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="darkModeSetting"> Dark Mode</div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked> Email Notifications</div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" checked> AI Review Alerts</div></div></div></div>
+    <footer class="text-center text-muted small py-3 mt-3 border-top">© 2025 EduTrack AI — Teacher Command Center | Create assignments, auto-evaluate tests, monitor AI reviews, predict performance</footer>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  const html = document.documentElement;
+  const darkToggle = document.getElementById('darkModeToggle');
+  const darkSetting = document.getElementById('darkModeSetting');
+  darkToggle?.addEventListener('click',()=>{ const isDark=html.getAttribute('data-theme')==='dark'; html.setAttribute('data-theme',isDark?'light':'dark'); if(darkSetting) darkSetting.checked=!isDark; });
+  darkSetting?.addEventListener('change',(e)=>{ html.setAttribute('data-theme',e.target.checked?'dark':'light'); if(darkToggle) darkToggle.querySelector('i').className=e.target.checked?'bi bi-sun-fill':'bi bi-moon-stars'; });
+  const sidebar=document.getElementById('sidebar'),toggleBtn=document.getElementById('sidebarToggle');
+  toggleBtn?.addEventListener('click',()=>sidebar.classList.toggle('show'));
+  document.addEventListener('click',(e)=>{ if(window.innerWidth<992 && sidebar && !sidebar.contains(e.target) && !toggleBtn?.contains(e.target)) sidebar.classList.remove('show'); });
+  // Chart
+  const ctx = document.getElementById('trendChart')?.getContext('2d');
+  if(ctx) new Chart(ctx, { type: 'line', data: { labels: ['Week1','Week2','Week3','Week4'], datasets: [{ label: 'Assignment Completion %', data: [72,78,84,87], borderColor: '#4F46E5', tension: 0.3 },{ label: 'Avg Test Score', data: [68,74,79,82], borderColor: '#10B981' }] } });
+</script>
+</body>
+</html>
