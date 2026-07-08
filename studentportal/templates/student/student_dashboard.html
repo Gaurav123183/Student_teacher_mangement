@@ -988,6 +988,169 @@ body {
     padding: 2px 8px;
   }
 }
+
+/* ===== FIX FOR CODE OVERFLOW - CRITICAL FIXES ===== */
+
+/* Force all code blocks to wrap and scroll properly */
+[class*="code-editor"],
+[class*="code-box"],
+[class*="code-container"],
+#extractedCode,
+#correctedCode {
+  overflow: auto !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+}
+
+[class*="code-editor"] pre,
+[class*="code-box"] pre,
+[class*="code-container"] pre,
+#extractedCode pre,
+#correctedCode pre {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+
+/* Fix for the specific code card sections */
+.upload-card .card-body,
+.code-card .card-body,
+.issues-card .card-body {
+  overflow: hidden !important;
+  max-width: 100% !important;
+}
+
+/* Ensure the review grid doesn't overflow */
+.review-grid {
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.review-left,
+.review-right {
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Fix for the copy button and badge alignment in code cards */
+.code-card .card-header {
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
+}
+
+.code-card .card-header > div {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.3rem !important;
+  align-items: center !important;
+}
+
+/* Force all cards to respect their container width */
+.card {
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Specifically target the extracted code and corrected code sections for mobile */
+@media (max-width: 768px) {
+  #extractedCode,
+  #correctedCode {
+    max-height: 250px !important;
+    overflow: auto !important;
+    font-size: 0.65rem !important;
+    padding: 0.5rem !important;
+  }
+  
+  #extractedCode pre,
+  #correctedCode pre {
+    font-size: 0.65rem !important;
+    line-height: 1.4 !important;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+  }
+  
+  /* Ensure the code doesn't push the page width */
+  .review-grid {
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+  
+  .review-left,
+  .review-right {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Force all content to respect container width */
+* {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* But allow code blocks to scroll internally */
+.code-editor,
+.code-box,
+.code-container,
+#extractedCode,
+#correctedCode {
+  max-width: 100% !important;
+  overflow: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Fix for the card containing the code */
+.card {
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Specifically target the code preview sections with more aggressive wrapping */
+#extractedCode pre,
+#correctedCode pre {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  word-break: break-all !important;
+  overflow-x: auto !important;
+  max-width: 100% !important;
+}
+
+/* Override any inline styles that might cause overflow */
+.code-editor[style*="white-space"] {
+  white-space: pre-wrap !important;
+}
+
+/* Make sure long strings break properly */
+.code-editor pre,
+.code-box pre {
+  overflow-wrap: break-word !important;
+  word-break: break-all !important;
+  hyphens: auto !important;
+}
+
+/* Fix for the code editor container on all screen sizes */
+@media (max-width: 991px) {
+  .code-editor {
+    max-height: 300px !important;
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .code-editor {
+    max-height: 200px !important;
+    font-size: 0.6rem !important;
+    padding: 0.4rem 0.6rem !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1040,14 +1203,14 @@ body {
         {% load static %}
 {% if user.6 %}
 <img
-    src="{{ user.6 }}"
+    src="/media/{{ user.6 }}"
     class="rounded-circle"
     width="120"
     height="120"
 >
 {% else %}
 <img
-    src="{{ user.6 }}"
+    src="{% static 'images/default_user.png' %}"
     class="rounded-circle"
     width="120"
     height="120"
@@ -1280,8 +1443,7 @@ body {
       </div>
     </section>
 
-    <!-- ================= HOMEWORK ================= -->
-  <!-- ================= AI CODE REVIEW (FIXED - NO WHITE GAP + WHITE TEXT) ================= -->
+    <!-- ================= AI CODE REVIEW (FIXED - NO WHITE GAP + WHITE TEXT) ================= -->
 <section id="code-review" class="mt-4">
   <!-- CSS GRID LAYOUT -->
   <div class="review-grid">
@@ -2077,7 +2239,7 @@ int main() {
           </div>
           <div class="glass-card p-4">
             <div class="d-flex align-items-center gap-3 mb-3">
-              <img src="{{ user.6 }}" class="rounded-4" style="width:72px;height:72px;object-fit:cover;">
+              <img src="https://i.pravatar.cc/100?img=47" class="rounded-4" style="width:72px;height:72px;object-fit:cover;">
               <div>
                 <h5 class="fw-bold mb-0">{{user.1.split.0}} {{user.1.split.2}}</h5>
                 <p class="text-muted mb-0 small">Student ID:{{student.0}}</p>
