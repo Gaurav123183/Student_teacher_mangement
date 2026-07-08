@@ -3,9 +3,21 @@ import os
 from django.http import HttpResponse
 from . services import Student
 from django.core.files.storage import FileSystemStorage
+import cloudinary.uploader
+import cloudinary
+import cloudinary.uploader
+import os
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True,
+)
 ###########LANDINGPAGE###########################
 def landing_page(request):
     return render(request,'landing_page.html')
+
 
 
 ###########LANDINGPAGE###########################
@@ -136,23 +148,19 @@ def edit_information(request):
         # Upload image
         if profile_image:
 
-            fs = FileSystemStorage(
-                location="media/profile_images"
-            )
+         result = cloudinary.uploader.upload(
+         profile_image,
+         folder="profile_images"
+    )
 
-            filename = fs.save(
-                profile_image.name,
-                profile_image
-            )
+        image_url = result["secure_url"]
 
-            image_path = "profile_images/" + filename
+        obj.update_profile_image(
+        user_id,
+        image_url
+         )
 
-            obj.update_profile_image(
-                user_id,
-                image_path
-            )
-
-            print("IMAGE UPDATED:", image_path)
+        print("IMAGE UPDATED:", image_url) 
 
         # Students table
         obj.save_student_profile(
@@ -192,11 +200,12 @@ def teacher_dashboard(request):
 ###logout
 def logout_user(request):
 
+    request.session.pop("authenticated", None)
     request.session.pop("user_id", None)
+    request.session.pop("username", None)
     request.session.pop("role", None)
 
     return redirect("login")
-
 
 
 

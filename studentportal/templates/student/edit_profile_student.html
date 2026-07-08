@@ -241,13 +241,13 @@
           {% load static %}
 {% if user.6 %}
 <img
-    src="/media/{{ user.6 }}"
+    src="{{ user.6 }}"
     class="rounded-circle avatar-sm"
     alt="Profile"
 >
 {% else %}
 <img
-    src="{% static 'images/default_user.png' %}"
+    src="{{ user.6 }}"
     class="rounded-circle"
     width="120"
     height="120"
@@ -275,14 +275,14 @@
           {% load static %}
 {% if user.6 %}
 <img
-    src="/media/{{ user.6 }}"
+     src="{{ user.6 }}"
     class="rounded-circle"
     width="120"
     height="120"
 >
 {% else %}
 <img
-    src="{% static 'images/default_user.png' %}"
+    src="{{ user.6 }}"
     class="rounded-circle"
     width="120"
     height="120"
